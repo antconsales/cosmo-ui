@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(pnpm install:*)",
+      "Bash(npm:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm dev)",
+      "Bash(tree:*)",
+      "Bash(pnpm -r --filter @aura/renderer-web build:*)",
+      "Bash(pnpm -r --filter @aura/ai-adapter build:*)",
+      "Bash(pnpm -r --filter @aura/core-schema build:*)",
+      "Bash(pnpm:*)",
+      "Bash(find:*)",
+      "Bash(xargs sed:*)",
+      "Bash(npx vitest run)",
+      "Bash(npx storybook@latest init:*)",
+      "Bash(npx storybook@8 init:*)",
+      "Bash(pkill:*)",
+      "Bash(timeout 30 pnpm storybook:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

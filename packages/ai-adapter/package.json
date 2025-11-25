@@ -1,0 +1,42 @@
+{
+  "name": "@cosmo/ai-adapter",
+  "version": "0.1.0",
+  "description": "AI integration layer for Cosmo UI - prompts, examples, and correction loops",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "cosmo",
+    "ui",
+    "ai",
+    "adapter",
+    "llm",
+    "prompt"
+  ],
+  "author": "Antonio Consales",
+  "license": "MIT",
+  "dependencies": {
+    "@cosmo/core-schema": "workspace:*",
+    "@cosmo/validator": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  }
+}
