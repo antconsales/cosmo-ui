@@ -75,8 +75,11 @@ const VARIANT_COLORS: Record<string, { track: string; progress: string; text: st
  */
 export function ProgressRing({ ring }: ProgressRingProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [displayedValue, setDisplayedValue] = useState(ring.value);
-  const prevValueRef = useRef(ring.value);
+  const [displayedValue, setDisplayedValue] = useState(ring?.value ?? 0);
+  const prevValueRef = useRef(ring?.value ?? 0);
+
+  // Guard against undefined ring
+  if (!ring) return null;
 
   const variant = ring.variant || "neutral";
   const position = ring.position || "center";

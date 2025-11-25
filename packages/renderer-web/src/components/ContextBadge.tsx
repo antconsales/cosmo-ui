@@ -94,6 +94,9 @@ export function ContextBadge({ badge, onDismiss }: ContextBadgeProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(true);
 
+  // Guard against undefined badge
+  if (!badge) return null;
+
   const variant = badge.variant || "neutral";
   const position = badge.position || "top-right";
   const icon = badge.icon || "none";

@@ -26,7 +26,19 @@ export type ActionBarIcon =
   | "refresh"
   | "camera"
   | "mic"
-  | "speaker";
+  | "speaker"
+  | "play"
+  | "pause"
+  | "stop"
+  | "skip-next"
+  | "skip-prev"
+  | "record"
+  | "download"
+  | "upload"
+  | "notification"
+  | "user"
+  | "heart"
+  | "bookmark";
 
 export interface ActionBarItem {
   /** Unique identifier for this action */
