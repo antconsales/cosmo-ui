@@ -420,6 +420,24 @@ export default function Home() {
         <h1 style={{ fontSize: "1.5rem", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
           🚀 COSMO UI <span style={{ fontSize: "0.85rem", color: "#666", fontWeight: 400 }}>v1.0 • 16 Components</span>
         </h1>
+        <a
+          href="/ar"
+          style={{
+            padding: "8px 16px",
+            borderRadius: "8px",
+            background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+            color: "#fff",
+            textDecoration: "none",
+            fontSize: "0.85rem",
+            fontWeight: "500",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            boxShadow: "0 2px 8px rgba(99, 102, 241, 0.3)",
+          }}
+        >
+          🥽 AR Preview
+        </a>
       </div>
 
       {/* Provider + API Key Row */}
