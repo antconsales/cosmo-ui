@@ -14,15 +14,18 @@
     "@cosmo/renderer-web": "workspace:*",
     "@cosmo/validator": "workspace:*",
     "@google/generative-ai": "^0.21.0",
+    "@types/three": "^0.160.0",
     "next": "13.4.19",
     "openai": "^4.77.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "three": "^0.160.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/webxr": "^0.5.24",
     "typescript": "^5"
   }
 }
