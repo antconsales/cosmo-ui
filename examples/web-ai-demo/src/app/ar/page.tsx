@@ -152,6 +152,30 @@ export default function ARPage() {
   const sessionRef = useRef<XRSession | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const isDragging = useRef(false);
+
+  // Handle mouse drag for component repositioning
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current || !containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      setComponentPosition({
+        x: Math.max(5, Math.min(95, ((e.clientX - rect.left) / rect.width) * 100)),
+        y: Math.max(10, Math.min(90, ((e.clientY - rect.top) / rect.height) * 100)),
+      });
+    };
+
+    const handleMouseUp = () => {
+      isDragging.current = false;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
 
   useEffect(() => {
     // Check WebXR AR support with timeout
@@ -307,15 +331,24 @@ export default function ARPage() {
     setPlaced(true);
   };
 
+  const handleDismiss = () => {
+    // Cycle to next component
+    const types = Object.keys(DEMO_COMPONENTS) as ComponentType[];
+    const currentIndex = types.indexOf(selectedComponent);
+    const nextIndex = (currentIndex + 1) % types.length;
+    setSelectedComponent(types[nextIndex]);
+    setComponentPosition({ x: 50, y: 50 }); // Reset position
+  };
+
   const renderSelectedComponent = () => {
     const comp = DEMO_COMPONENTS[selectedComponent];
     const data = comp.data;
 
     switch (selectedComponent) {
       case "hudcard":
-        return <HUDCard card={data as unknown as Parameters<typeof HUDCard>[0]["card"]} />;
+        return <HUDCard card={data as unknown as Parameters<typeof HUDCard>[0]["card"]} onDismiss={handleDismiss} />;
       case "badge":
-        return <ContextBadge badge={data as unknown as Parameters<typeof ContextBadge>[0]["badge"]} />;
+        return <ContextBadge badge={data as unknown as Parameters<typeof ContextBadge>[0]["badge"]} onDismiss={handleDismiss} />;
       case "ring":
         return <ProgressRing ring={data as unknown as Parameters<typeof ProgressRing>[0]["ring"]} />;
       case "status":
@@ -340,22 +373,22 @@ export default function ARPage() {
       ref={containerRef}
       style={{
         width: "100vw",
-        height: "100vh",
-        backgroundColor: arActive ? "transparent" : "#0a0a0a",
+        minHeight: "100vh",
+        backgroundColor: arActive || webcamActive ? "transparent" : "#0a0a0a",
         position: "relative",
-        overflow: "hidden",
+        overflow: arActive || webcamActive ? "hidden" : "auto",
       }}
     >
       {/* Header - always visible */}
       <div
         style={{
-          position: "absolute",
+          position: arActive || webcamActive ? "absolute" : "sticky",
           top: 0,
           left: 0,
           right: 0,
           padding: "16px 24px",
-          background: arActive ? "rgba(0,0,0,0.5)" : "transparent",
-          backdropFilter: arActive ? "blur(10px)" : "none",
+          background: arActive || webcamActive ? "rgba(0,0,0,0.7)" : "#0a0a0a",
+          backdropFilter: arActive || webcamActive ? "blur(10px)" : "none",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -386,15 +419,13 @@ export default function ARPage() {
       </div>
 
       {/* Main content */}
-      {!arActive && !webcamActive ? (
+      {!arActive && !webcamActive && (
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-            padding: "100px 24px 24px",
+            padding: "32px 24px 48px",
           }}
         >
           {arSupported === null && (
@@ -560,7 +591,10 @@ export default function ARPage() {
             </div>
           )}
         </div>
-      ) : (
+      )}
+
+      {/* AR Mode UI - only when AR is active */}
+      {arActive && (
         <>
           {/* AR Overlay UI */}
           <div
@@ -674,17 +708,12 @@ export default function ARPage() {
               top: `${componentPosition.y}%`,
               transform: `translate(-50%, -50%) scale(${componentScale})`,
               zIndex: 10,
-              cursor: "move",
+              cursor: "grab",
+              userSelect: "none",
             }}
-            draggable
-            onDrag={(e) => {
-              if (e.clientX && e.clientY && containerRef.current) {
-                const rect = containerRef.current.getBoundingClientRect();
-                setComponentPosition({
-                  x: ((e.clientX - rect.left) / rect.width) * 100,
-                  y: ((e.clientY - rect.top) / rect.height) * 100,
-                });
-              }
+            onMouseDown={(e) => {
+              e.preventDefault();
+              isDragging.current = true;
             }}
           >
             {renderSelectedComponent()}
