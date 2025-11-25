@@ -1,7 +1,13 @@
 /**
  * @cosmo/renderer-web
  * React renderer for Cosmo UI components (Web)
+ *
+ * v1.0 - 16 Components for Wearable-Ready UI
  */
+
+// ============================================
+// CORE COMPONENTS (Original 6)
+// ============================================
 
 // HUDCard
 export { HUDCard } from "./components/HUDCard";
@@ -51,7 +57,70 @@ export type { ActionBarProps } from "./components/ActionBar";
 export { Tooltip } from "./components/Tooltip";
 export type { TooltipProps } from "./components/Tooltip";
 
-// Utils
+// ============================================
+// MEDIA COMPONENTS (New)
+// ============================================
+
+// MediaCard
+export { MediaCard } from "./components/MediaCard";
+export type { MediaCardProps } from "./components/MediaCard";
+
+// MiniPlayer
+export { MiniPlayer } from "./components/MiniPlayer";
+export type { MiniPlayerProps } from "./components/MiniPlayer";
+
+// Timer
+export { Timer } from "./components/Timer";
+export type { TimerProps } from "./components/Timer";
+
+// ============================================
+// COMMUNICATION COMPONENTS (New)
+// ============================================
+
+// MessagePreview
+export { MessagePreview } from "./components/MessagePreview";
+export type { MessagePreviewProps } from "./components/MessagePreview";
+
+// ContactCard
+export { ContactCard } from "./components/ContactCard";
+export type { ContactCardProps } from "./components/ContactCard";
+
+// ============================================
+// PRODUCTIVITY COMPONENTS (New)
+// ============================================
+
+// EventCard
+export { EventCard } from "./components/EventCard";
+export type { EventCardProps } from "./components/EventCard";
+
+// WeatherWidget
+export { WeatherWidget } from "./components/WeatherWidget";
+export type { WeatherWidgetProps } from "./components/WeatherWidget";
+
+// ============================================
+// SYSTEM COMPONENTS (New)
+// ============================================
+
+// QuickSettings
+export { QuickSettings } from "./components/QuickSettings";
+export type { QuickSettingsProps } from "./components/QuickSettings";
+
+// ActivityRing
+export { ActivityRing } from "./components/ActivityRing";
+export type { ActivityRingProps } from "./components/ActivityRing";
+
+// ============================================
+// NAVIGATION COMPONENTS (New)
+// ============================================
+
+// DirectionArrow
+export { DirectionArrow } from "./components/DirectionArrow";
+export type { DirectionArrowProps } from "./components/DirectionArrow";
+
+// ============================================
+// UTILS
+// ============================================
+
 export {
   getPositionStyle,
   getPositionTransform,

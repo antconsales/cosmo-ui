@@ -99,6 +99,9 @@ function injectPulseStyle() {
 export function StatusIndicator({ indicator }: StatusIndicatorProps) {
   const [isVisible, setIsVisible] = useState(false);
 
+  // Guard against undefined indicator
+  if (!indicator) return null;
+
   const state = indicator.state || "idle";
   const position = indicator.position || "top-right";
   const size = indicator.size ?? 12;

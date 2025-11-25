@@ -27,6 +27,18 @@ const ICON_MAP: Record<ActionBarIcon, string> = {
   camera: "📷",
   mic: "🎤",
   speaker: "🔊",
+  play: "▶",
+  pause: "⏸",
+  stop: "⏹",
+  "skip-next": "⏭",
+  "skip-prev": "⏮",
+  record: "⏺",
+  download: "⬇",
+  upload: "⬆",
+  notification: "🔔",
+  user: "👤",
+  heart: "❤",
+  bookmark: "🔖",
 };
 
 /**
@@ -91,10 +103,19 @@ const getPositionStyles = (position: ActionBarType["position"]): React.CSSProper
  * Bottom/side action bar with quick-access buttons
  */
 export function ActionBar({ bar, onAction }: ActionBarProps) {
-  if (bar.visible === false) return null;
+  // Guard against undefined bar or items
+  if (!bar || bar.visible === false) return null;
+  if (!bar.items || !Array.isArray(bar.items) || bar.items.length === 0) {
+    return null;
+  }
 
   const variant = bar.variant || "solid";
-  const variantStyle = VARIANT_STYLES[variant]!;
+  const defaultStyle: VariantStyle = {
+    bg: "rgba(255, 255, 255, 0.95)",
+    border: "1px solid rgba(0, 0, 0, 0.1)",
+    shadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
+  };
+  const variantStyle = VARIANT_STYLES[variant] || defaultStyle;
   const positionStyle = getPositionStyles(bar.position);
 
   const handleClick = (itemId: string, disabled?: boolean) => {

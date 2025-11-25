@@ -74,6 +74,9 @@ export function HUDCard({ card, onDismiss, onAction }: HUDCardProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(true);
 
+  // Guard against undefined card
+  if (!card) return null;
+
   const variant = card.variant || "neutral";
   const priority = card.priority || 3;
   const position = card.position || "top-right";

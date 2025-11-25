@@ -107,3 +107,43 @@ export {
   formatStatusIndicatorValidationErrors,
 } from "./statusIndicatorCorrector";
 export type { StatusIndicatorCorrectionResult } from "./statusIndicatorCorrector";
+
+// === ActionBar ===
+
+// System prompts
+export { ACTIONBAR_SYSTEM_PROMPT } from "./prompts/system";
+
+// === Tooltip ===
+
+// System prompts
+export { TOOLTIP_SYSTEM_PROMPT } from "./prompts/system";
+
+// === NEW COMPONENTS (v1.0) ===
+
+// Media Components
+export {
+  MEDIACARD_SYSTEM_PROMPT,
+  MINIPLAYER_SYSTEM_PROMPT,
+  TIMER_SYSTEM_PROMPT,
+} from "./prompts/system";
+
+// Communication Components
+export {
+  MESSAGEPREVIEW_SYSTEM_PROMPT,
+  CONTACTCARD_SYSTEM_PROMPT,
+} from "./prompts/system";
+
+// Productivity Components
+export {
+  EVENTCARD_SYSTEM_PROMPT,
+  WEATHERWIDGET_SYSTEM_PROMPT,
+} from "./prompts/system";
+
+// System Components
+export {
+  QUICKSETTINGS_SYSTEM_PROMPT,
+  ACTIVITYRING_SYSTEM_PROMPT,
+} from "./prompts/system";
+
+// Navigation Components
+export { DIRECTIONARROW_SYSTEM_PROMPT } from "./prompts/system";

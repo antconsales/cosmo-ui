@@ -136,12 +136,16 @@ const getArrowStyles = (position: TooltipType["position"], bg: string): React.CS
  * Info tooltip with hover/click/focus triggers
  */
 export function Tooltip({ tooltip, children }: TooltipProps) {
-  const [isVisible, setIsVisible] = useState(tooltip.visible ?? false);
+  const [isVisible, setIsVisible] = useState(tooltip?.visible ?? false);
   const showTimeoutRef = useRef<NodeJS.Timeout>();
   const hideTimeoutRef = useRef<NodeJS.Timeout>();
 
+  // Guard against undefined tooltip
+  if (!tooltip) return <>{children}</>;
+
   const variant = tooltip.variant || "dark";
-  const variantStyle = VARIANT_STYLES[variant]!;
+  const defaultStyle: VariantStyle = { bg: "#1f2937", color: "#f9fafb", border: "#374151" };
+  const variantStyle = VARIANT_STYLES[variant] || defaultStyle;
   const positionStyle = getPositionStyles(tooltip.position);
   const arrowStyle = getArrowStyles(tooltip.position, variantStyle.bg);
 
