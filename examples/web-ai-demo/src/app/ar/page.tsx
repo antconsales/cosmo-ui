@@ -139,26 +139,39 @@ const DEMO_COMPONENTS: Record<ComponentType, { name: string; emoji: string; data
 
 export default function ARPage() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [arSupported, setArSupported] = useState<boolean | null>(null);
   const [arActive, setArActive] = useState(false);
+  const [webcamActive, setWebcamActive] = useState(false);
   const [selectedComponent, setSelectedComponent] = useState<ComponentType>("hudcard");
   const [placed, setPlaced] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [componentPosition, setComponentPosition] = useState({ x: 50, y: 50 });
+  const [componentScale, setComponentScale] = useState(1);
 
   const sessionRef = useRef<XRSession | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
-    // Check WebXR AR support
+    // Check WebXR AR support with timeout
     const checkARSupport = async () => {
-      if (navigator.xr) {
-        try {
+      // Timeout after 3 seconds if check hangs
+      const timeout = setTimeout(() => {
+        setArSupported(false);
+      }, 3000);
+
+      try {
+        if (typeof navigator !== "undefined" && navigator.xr) {
           const supported = await navigator.xr.isSessionSupported("immersive-ar");
+          clearTimeout(timeout);
           setArSupported(supported);
-        } catch {
+        } else {
+          clearTimeout(timeout);
           setArSupported(false);
         }
-      } else {
+      } catch {
+        clearTimeout(timeout);
         setArSupported(false);
       }
     };
@@ -262,6 +275,34 @@ export default function ARPage() {
     }
   };
 
+  const startWebcamPreview = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      setWebcamActive(true);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to access webcam");
+    }
+  };
+
+  const stopWebcamPreview = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setWebcamActive(false);
+  };
+
   const placeComponent = () => {
     setPlaced(true);
   };
@@ -345,7 +386,7 @@ export default function ARPage() {
       </div>
 
       {/* Main content */}
-      {!arActive ? (
+      {!arActive && !webcamActive ? (
         <div
           style={{
             display: "flex",
@@ -362,21 +403,75 @@ export default function ARPage() {
             </div>
           )}
 
-          {arSupported === false && (
-            <div style={{ textAlign: "center", maxWidth: "400px" }}>
-              <div style={{ fontSize: "4rem", marginBottom: "16px" }}>😔</div>
-              <h2 style={{ color: "#fff", marginBottom: "8px" }}>AR Not Supported</h2>
+          {arSupported === false && !webcamActive && (
+            <div style={{ textAlign: "center", maxWidth: "500px" }}>
+              <div style={{ fontSize: "4rem", marginBottom: "16px" }}>📹</div>
+              <h2 style={{ color: "#fff", marginBottom: "8px" }}>Webcam Preview Mode</h2>
               <p style={{ color: "#888", fontSize: "0.9rem", marginBottom: "24px" }}>
-                WebXR AR requires a compatible device and browser:
+                WebXR AR not available on this device. Use webcam preview instead!
               </p>
-              <ul style={{ color: "#666", fontSize: "0.85rem", textAlign: "left", lineHeight: 1.8 }}>
-                <li>Chrome on Android (ARCore devices)</li>
-                <li>Safari on iOS 15+ (limited support)</li>
-                <li>HTTPS connection required</li>
-              </ul>
+
+              {/* Component selector */}
+              <div style={{ marginBottom: "32px" }}>
+                <label style={{ color: "#888", fontSize: "0.8rem", display: "block", marginBottom: "12px" }}>
+                  Choose Component
+                </label>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+                  {(Object.keys(DEMO_COMPONENTS) as ComponentType[]).map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setSelectedComponent(type)}
+                      style={{
+                        padding: "10px 16px",
+                        borderRadius: "8px",
+                        border: selectedComponent === type ? "2px solid #6366f1" : "1px solid #333",
+                        backgroundColor: selectedComponent === type ? "#1e1b4b" : "#1a1a1a",
+                        color: selectedComponent === type ? "#a5b4fc" : "#888",
+                        fontSize: "0.85rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {DEMO_COMPONENTS[type].emoji} {DEMO_COMPONENTS[type].name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div
+                style={{
+                  backgroundColor: "#1a1a1a",
+                  borderRadius: "12px",
+                  padding: "24px",
+                  marginBottom: "32px",
+                }}
+              >
+                <p style={{ color: "#666", fontSize: "0.8rem", marginBottom: "16px" }}>Preview</p>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  {renderSelectedComponent()}
+                </div>
+              </div>
+
+              <button
+                onClick={startWebcamPreview}
+                style={{
+                  padding: "16px 48px",
+                  borderRadius: "12px",
+                  border: "none",
+                  background: "linear-gradient(135deg, #10b981, #059669)",
+                  color: "#fff",
+                  fontSize: "1.1rem",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  boxShadow: "0 4px 20px rgba(16, 185, 129, 0.4)",
+                }}
+              >
+                📹 Start Webcam Preview
+              </button>
+
               <div style={{ marginTop: "24px", padding: "16px", backgroundColor: "#1a1a1a", borderRadius: "8px" }}>
-                <p style={{ color: "#888", fontSize: "0.8rem", margin: 0 }}>
-                  💡 Try opening this page on your phone with Chrome
+                <p style={{ color: "#666", fontSize: "0.8rem", margin: 0 }}>
+                  💡 For full AR: open on Chrome Android or Safari iOS
                 </p>
               </div>
             </div>
@@ -547,6 +642,161 @@ export default function ARPage() {
             >
               Exit AR
             </button>
+          </div>
+        </>
+      )}
+
+      {/* Webcam Preview Mode */}
+      {webcamActive && (
+        <>
+          {/* Video feed */}
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              zIndex: 1,
+            }}
+          />
+
+          {/* Component overlay */}
+          <div
+            style={{
+              position: "absolute",
+              left: `${componentPosition.x}%`,
+              top: `${componentPosition.y}%`,
+              transform: `translate(-50%, -50%) scale(${componentScale})`,
+              zIndex: 10,
+              cursor: "move",
+            }}
+            draggable
+            onDrag={(e) => {
+              if (e.clientX && e.clientY && containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
+                setComponentPosition({
+                  x: ((e.clientX - rect.left) / rect.width) * 100,
+                  y: ((e.clientY - rect.top) / rect.height) * 100,
+                });
+              }
+            }}
+          >
+            {renderSelectedComponent()}
+          </div>
+
+          {/* Controls */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: "24px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              display: "flex",
+              gap: "12px",
+              alignItems: "center",
+              zIndex: 20,
+              backgroundColor: "rgba(0,0,0,0.7)",
+              padding: "16px 24px",
+              borderRadius: "16px",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            {/* Component selector */}
+            <select
+              value={selectedComponent}
+              onChange={(e) => setSelectedComponent(e.target.value as ComponentType)}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "8px",
+                border: "1px solid #333",
+                backgroundColor: "#1a1a1a",
+                color: "#fff",
+                fontSize: "0.85rem",
+              }}
+            >
+              {(Object.keys(DEMO_COMPONENTS) as ComponentType[]).map((type) => (
+                <option key={type} value={type}>
+                  {DEMO_COMPONENTS[type].emoji} {DEMO_COMPONENTS[type].name}
+                </option>
+              ))}
+            </select>
+
+            {/* Scale controls */}
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <button
+                onClick={() => setComponentScale((s) => Math.max(0.5, s - 0.1))}
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "8px",
+                  border: "1px solid #333",
+                  backgroundColor: "#1a1a1a",
+                  color: "#fff",
+                  cursor: "pointer",
+                  fontSize: "1.2rem",
+                }}
+              >
+                -
+              </button>
+              <span style={{ color: "#888", fontSize: "0.8rem", minWidth: "40px", textAlign: "center" }}>
+                {Math.round(componentScale * 100)}%
+              </span>
+              <button
+                onClick={() => setComponentScale((s) => Math.min(2, s + 0.1))}
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "8px",
+                  border: "1px solid #333",
+                  backgroundColor: "#1a1a1a",
+                  color: "#fff",
+                  cursor: "pointer",
+                  fontSize: "1.2rem",
+                }}
+              >
+                +
+              </button>
+            </div>
+
+            {/* Exit button */}
+            <button
+              onClick={stopWebcamPreview}
+              style={{
+                padding: "8px 16px",
+                borderRadius: "8px",
+                border: "1px solid #ef4444",
+                backgroundColor: "rgba(239, 68, 68, 0.2)",
+                color: "#ef4444",
+                fontSize: "0.85rem",
+                cursor: "pointer",
+              }}
+            >
+              Exit
+            </button>
+          </div>
+
+          {/* Drag hint */}
+          <div
+            style={{
+              position: "absolute",
+              top: "100px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              color: "#fff",
+              fontSize: "0.85rem",
+              backgroundColor: "rgba(0,0,0,0.5)",
+              padding: "8px 16px",
+              borderRadius: "8px",
+              zIndex: 20,
+            }}
+          >
+            Drag component to reposition
           </div>
         </>
       )}
