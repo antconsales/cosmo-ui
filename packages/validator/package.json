@@ -1,0 +1,40 @@
+{
+  "name": "@cosmo/validator",
+  "version": "0.1.0",
+  "description": "Runtime validation and sanitization for Cosmo UI components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"Tests coming soon\""
+  },
+  "keywords": [
+    "cosmo",
+    "ui",
+    "validator",
+    "ai-first"
+  ],
+  "author": "Antonio Consales",
+  "license": "MIT",
+  "dependencies": {
+    "@cosmo/core-schema": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "@cosmo/core-schema",
+  "version": "0.1.0",
+  "description": "Type definitions and schemas for Cosmo UI components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./components/*": {
+      "import": "./dist/components/*.mjs",
+      "require": "./dist/components/*.js",
+      "types": "./dist/components/*.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "cosmo",
+    "ui",
+    "schema",
+    "ai-first",
+    "cross-reality",
+    "typescript"
+  ],
+  "author": "Antonio Consales",
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  }
+}

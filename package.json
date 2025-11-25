@@ -1,0 +1,43 @@
+{
+  "name": "aura-ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-first cross-reality UI framework",
+  "author": "Antonio Consales",
+  "license": "MIT",
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "clean": "pnpm -r clean && rm -rf node_modules",
+    "typecheck": "pnpm -r typecheck",
+    "test": "npx vitest run",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^2.1.0",
+    "@vitest/coverage-v8": "^2.1.0",
+    "@storybook/react": "^8.4.0",
+    "@storybook/react-vite": "^8.4.0",
+    "@storybook/addon-essentials": "^8.4.0",
+    "@storybook/addon-interactions": "^8.4.0",
+    "@storybook/addon-links": "^8.4.0",
+    "@storybook/blocks": "^8.4.0",
+    "storybook": "^8.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "zustand": "^4.5.0"
+    }
+  }
+}

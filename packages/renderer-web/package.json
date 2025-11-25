@@ -1,0 +1,50 @@
+{
+  "name": "@cosmo/renderer-web",
+  "version": "0.1.0",
+  "description": "React renderer for Cosmo UI components (Web)",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean --external react",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch --external react",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"Tests coming soon\""
+  },
+  "keywords": [
+    "cosmo",
+    "ui",
+    "renderer",
+    "react",
+    "web"
+  ],
+  "author": "Antonio Consales",
+  "license": "MIT",
+  "dependencies": {
+    "@cosmo/core-schema": "workspace:*",
+    "@cosmo/validator": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.47",
+    "@types/react-dom": "^18.2.18",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  }
+}
