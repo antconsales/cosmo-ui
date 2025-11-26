@@ -285,6 +285,19 @@ importers:
         specifier: ^5.3.3
         version: 5.9.3
 
+  packages/renderer-meta:
+    dependencies:
+      '@cosmo/core-schema':
+        specifier: workspace:*
+        version: link:../core-schema
+    devDependencies:
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(typescript@5.9.3)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+
   packages/renderer-web:
     dependencies:
       '@cosmo/core-schema':

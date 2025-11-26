@@ -1,0 +1,44 @@
+{
+  "name": "@cosmo/renderer-meta",
+  "version": "0.1.0",
+  "description": "Meta Ray-Ban Display renderer for Cosmo UI - Ready for Meta Wearables SDK",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "cosmo",
+    "ui",
+    "meta",
+    "ray-ban",
+    "smart-glasses",
+    "ar",
+    "hud",
+    "wearables",
+    "neural-band"
+  ],
+  "author": "Antonio Consales",
+  "license": "MIT",
+  "dependencies": {
+    "@cosmo/core-schema": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  }
+}
