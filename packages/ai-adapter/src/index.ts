@@ -147,3 +147,15 @@ export {
 
 // Navigation Components
 export { DIRECTIONARROW_SYSTEM_PROMPT } from "./prompts/system";
+
+// === TOON (Token-Oriented Object Notation) ===
+// Compact format for ~30-60% token savings on context data
+
+export {
+  toContextFormat,
+  formatExamplesAsToon,
+  smartContextFormat,
+  estimateTokenSavings,
+  wrapContext,
+} from "./toon";
+export type { ContextFormat, ToonOptions } from "./toon";
