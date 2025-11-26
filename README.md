@@ -95,6 +95,17 @@ COSMO UI:    AI generates JSON → Validator checks → UI renders
 
 COSMO UI provides **6 AI-optimized components**:
 
+### Component Gallery (Storybook)
+
+| Component | What you see in Storybook | Story file |
+|-----------|--------------------------|------------|
+| HUDCard | Floating toast with title/content, variants that shift background/edge glow, dismissal demo | `stories/HUDCard.stories.tsx` |
+| ContextBadge | Pill-shaped badge with pulse animation toggle and status color palette | `stories/ContextBadge.stories.tsx` |
+| ProgressRing | Circular progress arc with numeric center label and variant-based glow | `stories/ProgressRing.stories.tsx` |
+| StatusIndicator | Compact dot/label combo showing online/offline/recording states | `stories/StatusIndicator.stories.tsx` |
+| ActionBar | Glassmorphism nav bar with active/disabled states plus horizontal/vertical layouts | `stories/ActionBar.stories.tsx` |
+| Tooltip | Minimal bubble with caret that previews each placement + info/warning variants | `stories/Tooltip.stories.tsx` |
+
 ### 1. HUDCard
 Lightweight, glanceable notification/info cards.
 

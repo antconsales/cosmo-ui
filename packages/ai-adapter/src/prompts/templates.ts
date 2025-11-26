@@ -1,5 +1,6 @@
 import type { HUDCard } from "@cosmo/core-schema";
 import { getRandomExamples } from "./examples";
+import { toContextFormat, type ContextFormat } from "../toon";
 
 /**
  * Prompt templates for HUDCard generation
@@ -9,6 +10,8 @@ export interface GenerationOptions {
   intent: string;
   fewShotCount?: number; // Number of examples to include (default: 3)
   includeSystemPrompt?: boolean; // Include full system prompt (default: true)
+  /** Context format for examples: "json" (default) or "toon" (30-60% token savings) */
+  contextFormat?: ContextFormat;
 }
 
 /**
@@ -19,9 +22,11 @@ export function buildGenerationPrompt(options: GenerationOptions): string {
     intent,
     fewShotCount = 3,
     includeSystemPrompt = true,
+    contextFormat = "json",
   } = options;
 
   const examples = getRandomExamples(fewShotCount);
+  const useToon = contextFormat === "toon";
 
   const parts: string[] = [];
 
@@ -38,16 +43,27 @@ export function buildGenerationPrompt(options: GenerationOptions): string {
 
   // Few-shot examples
   if (examples.length > 0) {
-    parts.push(`Here are some example HUDCards:`);
-    parts.push(``);
-
-    examples.forEach((example, idx) => {
-      parts.push(`Example ${idx + 1}:`);
-      parts.push(`Intent: "${example.intent}"`);
-      parts.push(`Output:`);
-      parts.push(JSON.stringify(example.card, null, 2));
+    if (useToon) {
+      // TOON format - more compact, ~30-60% token savings
+      parts.push(`Here are some example HUDCards (in TOON compact format):`);
       parts.push(``);
-    });
+      examples.forEach((example, idx) => {
+        parts.push(`Example ${idx + 1}: "${example.intent}"`);
+        parts.push(toContextFormat(example.card, { format: "toon", includeFormatHint: false }));
+        parts.push(``);
+      });
+    } else {
+      // JSON format - traditional
+      parts.push(`Here are some example HUDCards:`);
+      parts.push(``);
+      examples.forEach((example, idx) => {
+        parts.push(`Example ${idx + 1}:`);
+        parts.push(`Intent: "${example.intent}"`);
+        parts.push(`Output:`);
+        parts.push(JSON.stringify(example.card, null, 2));
+        parts.push(``);
+      });
+    }
   }
 
   // User intent
