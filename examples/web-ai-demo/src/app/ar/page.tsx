@@ -178,23 +178,28 @@ export default function ARPage() {
   }, []);
 
   useEffect(() => {
-    // Check WebXR AR support with timeout
+    // Check WebXR AR support with fast timeout
     const checkARSupport = async () => {
-      // Timeout after 3 seconds if check hangs
+      // Fast timeout - don't wait more than 1 second
       const timeout = setTimeout(() => {
+        console.log("[AR] WebXR check timed out, falling back to webcam");
         setArSupported(false);
-      }, 3000);
+      }, 1000);
 
       try {
         if (typeof navigator !== "undefined" && navigator.xr) {
-          const supported = await navigator.xr.isSessionSupported("immersive-ar");
+          const supported = await Promise.race([
+            navigator.xr.isSessionSupported("immersive-ar"),
+            new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 800))
+          ]);
           clearTimeout(timeout);
           setArSupported(supported);
         } else {
           clearTimeout(timeout);
           setArSupported(false);
         }
-      } catch {
+      } catch (err) {
+        console.log("[AR] WebXR check failed:", err);
         clearTimeout(timeout);
         setArSupported(false);
       }
@@ -301,18 +306,41 @@ export default function ARPage() {
 
   const startWebcamPreview = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
-      });
+      // Try back camera first, fall back to front camera
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+        });
+      } catch {
+        // Fallback to front camera (for laptops/desktops)
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+        });
+      }
+
+      console.log("[Webcam] Stream obtained:", stream.getVideoTracks()[0]?.label);
       streamRef.current = stream;
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        // Wait for video to be ready
+        videoRef.current.onloadedmetadata = () => {
+          console.log("[Webcam] Video dimensions:", videoRef.current?.videoWidth, "x", videoRef.current?.videoHeight);
+        };
         await videoRef.current.play();
+        console.log("[Webcam] Video playing");
       }
       setWebcamActive(true);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to access webcam");
+      console.error("[Webcam] Error:", err);
+      const message = err instanceof Error ? err.message : "Failed to access webcam";
+      if (message.includes("NotAllowed") || message.includes("Permission")) {
+        setError("Camera blocked. Click the shield/camera icon in the address bar to allow.");
+      } else {
+        setError(message);
+      }
     }
   };
 
@@ -680,34 +708,38 @@ export default function ARPage() {
         </>
       )}
 
-      {/* Webcam Preview Mode */}
+      {/* Video element - always present, visible only when webcamActive */}
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        muted
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          objectFit: "cover",
+          zIndex: webcamActive ? 9998 : -9999,
+          opacity: webcamActive ? 1 : 0,
+          pointerEvents: webcamActive ? "auto" : "none",
+        }}
+        onLoadedData={() => console.log("[Video] Data loaded!")}
+      />
+
+      {/* Webcam Preview Mode - overlays */}
       {webcamActive && (
         <>
-          {/* Video feed */}
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              zIndex: 1,
-            }}
-          />
 
           {/* Component overlay */}
           <div
             style={{
-              position: "absolute",
+              position: "fixed",
               left: `${componentPosition.x}%`,
               top: `${componentPosition.y}%`,
               transform: `translate(-50%, -50%) scale(${componentScale})`,
-              zIndex: 10,
+              zIndex: 9999,
               cursor: "grab",
               userSelect: "none",
             }}
@@ -722,14 +754,14 @@ export default function ARPage() {
           {/* Controls */}
           <div
             style={{
-              position: "absolute",
+              position: "fixed",
               bottom: "24px",
               left: "50%",
               transform: "translateX(-50%)",
               display: "flex",
               gap: "12px",
               alignItems: "center",
-              zIndex: 20,
+              zIndex: 10000,
               backgroundColor: "rgba(0,0,0,0.7)",
               padding: "16px 24px",
               borderRadius: "16px",
@@ -813,7 +845,7 @@ export default function ARPage() {
           {/* Drag hint */}
           <div
             style={{
-              position: "absolute",
+              position: "fixed",
               top: "100px",
               left: "50%",
               transform: "translateX(-50%)",
@@ -822,7 +854,7 @@ export default function ARPage() {
               backgroundColor: "rgba(0,0,0,0.5)",
               padding: "8px 16px",
               borderRadius: "8px",
-              zIndex: 20,
+              zIndex: 10000,
             }}
           >
             Drag component to reposition
