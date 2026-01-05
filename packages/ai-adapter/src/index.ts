@@ -148,6 +148,32 @@ export {
 // Navigation Components
 export { DIRECTIONARROW_SYSTEM_PROMPT } from "./prompts/system";
 
+// === ADVANCED FEATURES (v2.0) ===
+
+// Spatial Intent System
+export {
+  SPATIAL_INTENT_SYSTEM_PROMPT,
+  SPATIAL_INTENT_SCHEMA_DOCS,
+} from "./prompts/system";
+
+// AI Confidence & Multi-Agent
+export {
+  AI_CONFIDENCE_SYSTEM_PROMPT,
+  MULTI_AGENT_SYSTEM_PROMPT,
+} from "./prompts/system";
+
+// Adaptive Complexity
+export { ADAPTIVE_COMPLEXITY_SYSTEM_PROMPT } from "./prompts/system";
+
+// Voice-First System
+export { VOICE_FIRST_SYSTEM_PROMPT } from "./prompts/system";
+
+// Combined Advanced System Prompt
+export {
+  COSMO_UI_ADVANCED_SYSTEM_PROMPT,
+  ADVANCED_SCHEMA_DOCS,
+} from "./prompts/system";
+
 // === TOON (Token-Oriented Object Notation) ===
 // Compact format for ~30-60% token savings on context data
 

@@ -9,6 +9,8 @@ import {
 export interface ContextBadgeProps {
   badge: ContextBadgeType;
   onDismiss?: (id: string) => void;
+  /** Stack index for multiple badges at same position */
+  stackIndex?: number;
 }
 
 /**
@@ -90,7 +92,7 @@ function injectPulseStyle() {
  * - Auto-dismiss support
  * - Pulse animation option
  */
-export function ContextBadge({ badge, onDismiss }: ContextBadgeProps) {
+export function ContextBadge({ badge, onDismiss, stackIndex = 0 }: ContextBadgeProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(true);
 
@@ -101,10 +103,21 @@ export function ContextBadge({ badge, onDismiss }: ContextBadgeProps) {
   const position = badge.position || "top-right";
   const icon = badge.icon || "none";
 
+  // Calculate stack offset (32px per badge - slightly larger for pill badges)
+  const stackOffset = stackIndex * 32;
+
   // Get styles
   const variantStyle = VARIANT_STYLES[variant] ?? VARIANT_STYLES.neutral!;
   const positionStyle = getPositionStyle(position as ContextBadgePosition);
   const transform = getPositionTransform(position as ContextBadgePosition);
+
+  // Determine stack direction based on position
+  const isTopPosition = position.startsWith("top");
+  const stackStyle = stackOffset > 0 ? (
+    isTopPosition
+      ? { marginTop: stackOffset }
+      : { marginBottom: stackOffset }
+  ) : {};
 
   // Custom color override
   const bgColor = badge.contextualColor || variantStyle.bg;
@@ -155,6 +168,7 @@ export function ContextBadge({ badge, onDismiss }: ContextBadgeProps) {
       style={{
         position: "fixed",
         ...positionStyle,
+        ...stackStyle,
         transform: badge.pulse
           ? `${transform !== "none" ? transform : ""}`
           : transform,
@@ -169,9 +183,9 @@ export function ContextBadge({ badge, onDismiss }: ContextBadgeProps) {
         fontSize: "13px",
         fontWeight: 500,
         color: textColor,
-        zIndex: getZIndex(3),
+        zIndex: getZIndex(3) - stackIndex,
         opacity: isVisible ? 1 : 0,
-        transition: "opacity 0.15s ease-in-out",
+        transition: "opacity 0.15s ease-in-out, margin 0.2s ease-in-out",
         pointerEvents: "auto",
         whiteSpace: "nowrap",
         animation: badge.pulse ? "cosmo-badge-pulse 2s ease-in-out infinite" : "none",

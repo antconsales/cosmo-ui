@@ -1,7 +1,7 @@
 {
   "name": "@cosmo/validator",
-  "version": "0.1.0",
-  "description": "Runtime validation and sanitization for Cosmo UI components",
+  "version": "2.0.0",
+  "description": "Runtime validation and sanitization for Cosmo UI components - ensures safe AI-generated UI",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -15,26 +15,43 @@
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"Tests coming soon\""
+    "test": "vitest run"
   },
   "keywords": [
     "cosmo",
     "ui",
     "validator",
-    "ai-first"
+    "ai-first",
+    "sanitization",
+    "runtime-validation",
+    "type-safe"
   ],
   "author": "Antonio Consales",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antonioconsales/cosmo-ui.git",
+    "directory": "packages/validator"
+  },
+  "homepage": "https://github.com/antonioconsales/cosmo-ui/tree/main/packages/validator#readme",
+  "bugs": {
+    "url": "https://github.com/antonioconsales/cosmo-ui/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@cosmo/core-schema": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^2.1.0"
   }
 }

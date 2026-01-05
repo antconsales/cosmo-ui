@@ -93,18 +93,36 @@ export function StatusIndicatorManager({
     [removeIndicator]
   );
 
+  // Group indicators by position for stacking
+  const indicatorsByPosition = new Map<string, StatusIndicatorType[]>();
+  indicators.forEach((indicator) => {
+    const pos = indicator.position || "top-right";
+    const list = indicatorsByPosition.get(pos) || [];
+    list.push(indicator);
+    indicatorsByPosition.set(pos, list);
+  });
+
+  // Flatten with stack index
+  const indicatorsWithStack: Array<{ indicator: StatusIndicatorType; stackIndex: number }> = [];
+  indicatorsByPosition.forEach((list) => {
+    list.forEach((indicator, index) => {
+      indicatorsWithStack.push({ indicator, stackIndex: index });
+    });
+  });
+
   return (
     <StatusIndicatorManagerContext.Provider
       value={{ indicators, addIndicator, updateIndicator, removeIndicator, clearAll }}
     >
       {children}
 
-      {/* Render all active indicators */}
-      {Array.from(indicators.values()).map((indicator) => (
+      {/* Render all active indicators with stack offset */}
+      {indicatorsWithStack.map(({ indicator, stackIndex }) => (
         <StatusIndicator
           key={indicator.id}
           indicator={indicator}
           onDismiss={handleDismiss}
+          stackIndex={stackIndex}
         />
       ))}
     </StatusIndicatorManagerContext.Provider>

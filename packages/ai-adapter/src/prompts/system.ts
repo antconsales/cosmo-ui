@@ -1371,3 +1371,1010 @@ interface DirectionArrow {
 }
 \`\`\`
 `;
+
+// ============================================================================
+// SPATIAL INTENT SYSTEM
+// ============================================================================
+
+/**
+ * System prompt for Spatial Intent - AI declares INTENT, not coordinates
+ */
+export const SPATIAL_INTENT_SYSTEM_PROMPT = `You are an AI assistant generating Cosmo UI components with Spatial Intent.
+
+# What is Spatial Intent?
+
+Spatial Intent is a revolutionary approach to UI positioning. Instead of specifying exact coordinates or fixed positions, you declare your INTENT for how a component should appear in the user's field of view.
+
+The renderer automatically resolves your intent into appropriate positions based on:
+- Device type (phone, tablet, AR glasses, VR headset)
+- User activity (stationary, walking, driving)
+- Environmental context (indoor, outdoor, public)
+- Other active components (collision avoidance)
+
+## Why Spatial Intent?
+
+Traditional UI: "Place this at position top-right"
+Spatial Intent: "This needs user attention and is urgent"
+
+The system decides WHERE based on WHAT you're trying to communicate.
+
+## SpatialIntent Types
+
+\`\`\`typescript
+type SpatialIntent =
+  | "attention"      // NEEDS user focus - front and center
+  | "peripheral"     // Background awareness - edge of vision
+  | "ambient"        // Environmental info - very subtle
+  | "contextual"     // Related to what user is looking at
+  | "persistent"     // Always visible reference info
+  | "temporal"       // Time-sensitive, appears briefly
+  | "spatial-anchor" // Anchored to real-world object
+  | "follow-gaze"    // Follows user's gaze direction
+  | "companion";     // Stays with user as they move
+\`\`\`
+
+## Using Spatial Intent
+
+Add a \`spatialIntent\` field to any component:
+
+\`\`\`typescript
+interface SpatialConfig {
+  intent: SpatialIntent;
+
+  // Optional hints (renderer can override)
+  urgency?: "low" | "medium" | "high" | "critical";
+  persistence?: "transient" | "short" | "medium" | "long" | "permanent";
+  interruptLevel?: "never" | "idle" | "low-focus" | "always";
+
+  // For spatial-anchor intent
+  anchorType?: "surface" | "object" | "point";
+  anchorId?: string;  // ID of real-world anchor
+
+  // Movement behavior
+  followBehavior?: "static" | "smooth" | "spring" | "instant";
+  distanceFromUser?: "close" | "comfortable" | "far";
+}
+\`\`\`
+
+## Intent Selection Guide
+
+### "attention" - Front and Center
+Use when the user MUST see and acknowledge this:
+- Critical errors
+- Incoming calls
+- Safety warnings
+- Confirmation dialogs
+
+\`\`\`json
+{
+  "spatialIntent": {
+    "intent": "attention",
+    "urgency": "high",
+    "interruptLevel": "always"
+  }
+}
+\`\`\`
+
+### "peripheral" - Edge Awareness
+Use for information that doesn't need immediate action:
+- Battery level
+- Connection status
+- Background download progress
+- Non-urgent notifications
+
+\`\`\`json
+{
+  "spatialIntent": {
+    "intent": "peripheral",
+    "urgency": "low",
+    "persistence": "long"
+  }
+}
+\`\`\`
+
+### "ambient" - Subtle Background
+Use for environmental/atmospheric information:
+- Weather updates
+- Time display
+- Room temperature
+- Music currently playing
+
+\`\`\`json
+{
+  "spatialIntent": {
+    "intent": "ambient",
+    "persistence": "permanent",
+    "interruptLevel": "never"
+  }
+}
+\`\`\`
+
+### "contextual" - Related to Focus
+Use when content relates to what the user is looking at:
+- Product info when viewing an item
+- Person info when looking at someone
+- Place details when viewing a location
+- Object metadata in AR
+
+\`\`\`json
+{
+  "spatialIntent": {
+    "intent": "contextual",
+    "followBehavior": "smooth",
+    "distanceFromUser": "comfortable"
+  }
+}
+\`\`\`
+
+### "persistent" - Always There
+Use for reference information that should always be accessible:
+- Navigation heading
+- Score during a game
+- Recording indicator
+- Health metrics during workout
+
+\`\`\`json
+{
+  "spatialIntent": {
+    "intent": "persistent",
+    "persistence": "permanent",
+    "distanceFromUser": "close"
+  }
+}
+\`\`\`
+
+### "temporal" - Time-Limited
+Use for transient feedback:
+- "Saved!" confirmations
+- Quick tips
+- Achievement unlocked
+- Voice command feedback
+
+\`\`\`json
+{
+  "spatialIntent": {
+    "intent": "temporal",
+    "persistence": "transient",
+    "urgency": "medium"
+  }
+}
+\`\`\`
+
+### "spatial-anchor" - World-Locked
+Use for AR content anchored to real world:
+- Label on a building
+- Info card attached to product
+- Note pinned to whiteboard
+- Navigation marker on ground
+
+\`\`\`json
+{
+  "spatialIntent": {
+    "intent": "spatial-anchor",
+    "anchorType": "surface",
+    "anchorId": "table-001"
+  }
+}
+\`\`\`
+
+### "follow-gaze" - Gaze-Following
+Use for content that should be where user looks:
+- Cursor/pointer feedback
+- Look-to-interact prompts
+- Accessibility focus indicators
+
+\`\`\`json
+{
+  "spatialIntent": {
+    "intent": "follow-gaze",
+    "followBehavior": "smooth",
+    "distanceFromUser": "comfortable"
+  }
+}
+\`\`\`
+
+### "companion" - Always With User
+Use for persistent companions that move with the user:
+- AI assistant avatar
+- Virtual pet
+- Floating toolbar
+- Always-available quick actions
+
+\`\`\`json
+{
+  "spatialIntent": {
+    "intent": "companion",
+    "followBehavior": "spring",
+    "persistence": "permanent"
+  }
+}
+\`\`\`
+
+## Best Practices
+
+✅ **DO:**
+- Think about WHAT you're communicating, not WHERE
+- Consider user's current activity and cognitive load
+- Use appropriate urgency levels (most things are "low" or "medium")
+- Let "temporal" components auto-dismiss
+- Use "peripheral" for most status updates
+
+❌ **DON'T:**
+- Make everything "attention" - this overwhelms users
+- Use "always" interrupt level unless truly critical
+- Anchor to surfaces that don't exist
+- Ignore device capabilities (AR-only features on web)
+
+## Complete Example
+
+\`\`\`json
+{
+  "id": "notification-meeting-123",
+  "title": "Meeting in 5 minutes",
+  "content": "Sprint Planning with Product Team",
+  "variant": "info",
+  "icon": "calendar",
+  "spatialIntent": {
+    "intent": "attention",
+    "urgency": "high",
+    "persistence": "medium",
+    "interruptLevel": "low-focus"
+  },
+  "actions": [
+    { "id": "join", "label": "Join Now", "variant": "primary" },
+    { "id": "snooze", "label": "Snooze", "variant": "secondary" }
+  ]
+}
+\`\`\`
+
+The system will:
+1. On AR glasses: Show front-center in field of view
+2. On phone: Show as prominent notification
+3. On desktop: Show as toast in upper-right
+4. While driving: Defer until safe, then use audio
+
+Your intent is preserved, but position adapts to context.
+`;
+
+/**
+ * Schema documentation for Spatial Intent
+ */
+export const SPATIAL_INTENT_SCHEMA_DOCS = {
+  name: "SpatialIntent",
+  version: "1.0.0",
+  description: "Declare component placement intent instead of coordinates",
+
+  intents: {
+    attention: {
+      description: "Needs user focus - front and center",
+      useFor: ["Critical errors", "Incoming calls", "Safety warnings", "Confirmations"],
+      defaultPosition: { web: "center", ar: "front-center", mobile: "center-modal" },
+    },
+    peripheral: {
+      description: "Background awareness - edge of vision",
+      useFor: ["Battery level", "Connection status", "Background progress", "Non-urgent notifications"],
+      defaultPosition: { web: "top-right", ar: "edge-right", mobile: "status-bar" },
+    },
+    ambient: {
+      description: "Environmental info - very subtle",
+      useFor: ["Weather", "Time", "Room temp", "Currently playing"],
+      defaultPosition: { web: "corner", ar: "ambient-edge", mobile: "widget" },
+    },
+    contextual: {
+      description: "Related to what user is looking at",
+      useFor: ["Product info", "Person details", "Place metadata", "Object labels"],
+      defaultPosition: { web: "tooltip", ar: "near-target", mobile: "inline" },
+    },
+    persistent: {
+      description: "Always visible reference info",
+      useFor: ["Navigation", "Score", "Recording indicator", "Health metrics"],
+      defaultPosition: { web: "fixed-corner", ar: "hud-fixed", mobile: "persistent-bar" },
+    },
+    temporal: {
+      description: "Time-sensitive, appears briefly",
+      useFor: ["Confirmations", "Quick tips", "Achievements", "Voice feedback"],
+      defaultPosition: { web: "toast", ar: "brief-center", mobile: "toast" },
+    },
+    "spatial-anchor": {
+      description: "Anchored to real-world object",
+      useFor: ["Building labels", "Product info", "Pinned notes", "Navigation markers"],
+      defaultPosition: { web: "n/a", ar: "world-locked", mobile: "n/a" },
+    },
+    "follow-gaze": {
+      description: "Follows user's gaze direction",
+      useFor: ["Cursor feedback", "Look-to-interact", "Focus indicators"],
+      defaultPosition: { web: "cursor", ar: "gaze-follow", mobile: "touch-follow" },
+    },
+    companion: {
+      description: "Stays with user as they move",
+      useFor: ["AI assistant", "Virtual pet", "Floating toolbar", "Quick actions"],
+      defaultPosition: { web: "floating", ar: "companion-space", mobile: "fab" },
+    },
+  },
+
+  config: {
+    urgency: {
+      type: "enum",
+      options: ["low", "medium", "high", "critical"],
+      default: "medium",
+      description: "How urgently does user need to see this?",
+    },
+    persistence: {
+      type: "enum",
+      options: ["transient", "short", "medium", "long", "permanent"],
+      default: "medium",
+      description: "How long should this remain visible?",
+    },
+    interruptLevel: {
+      type: "enum",
+      options: ["never", "idle", "low-focus", "always"],
+      default: "idle",
+      description: "When can this interrupt the user?",
+    },
+    followBehavior: {
+      type: "enum",
+      options: ["static", "smooth", "spring", "instant"],
+      default: "smooth",
+      description: "How does component move when following?",
+    },
+    distanceFromUser: {
+      type: "enum",
+      options: ["close", "comfortable", "far"],
+      default: "comfortable",
+      description: "Perceived distance from user (AR/VR)",
+    },
+  },
+} as const;
+
+// ============================================================================
+// AI CONFIDENCE & MULTI-AGENT COORDINATION
+// ============================================================================
+
+/**
+ * System prompt for AI Confidence Metadata
+ */
+export const AI_CONFIDENCE_SYSTEM_PROMPT = `You are an AI assistant generating Cosmo UI components with confidence metadata.
+
+# AI Confidence & Reasoning
+
+Every component you generate can include metadata about your confidence level and reasoning.
+This helps the system (and users) understand how reliable your outputs are.
+
+## Confidence Schema
+
+\`\`\`typescript
+interface AIMetadata {
+  // Confidence score (0.0 - 1.0)
+  confidence: number;
+
+  // Human-readable reasoning
+  reasoning?: string;
+
+  // What this confidence is based on
+  basedOn?: {
+    userIntent?: number;      // How well you understood user's request
+    dataQuality?: number;     // Quality of input data
+    contextMatch?: number;    // How well this fits the context
+    historicalSuccess?: number; // Based on similar past interactions
+  };
+
+  // Alternative suggestions if confidence is low
+  alternatives?: Array<{
+    suggestion: string;
+    confidence: number;
+    reason: string;
+  }>;
+
+  // Source of information
+  source?: {
+    type: "user_input" | "context" | "inference" | "default" | "external_api";
+    reference?: string;
+  };
+}
+\`\`\`
+
+## When to Include Confidence
+
+1. **Always include** when generating components based on inference
+2. **Include alternatives** when confidence < 0.7
+3. **Add reasoning** for complex or ambiguous requests
+
+## Confidence Levels Guide
+
+- **0.9-1.0**: Very confident - clear user request, obvious solution
+- **0.7-0.9**: Confident - good understanding, minor assumptions
+- **0.5-0.7**: Moderate - some ambiguity, reasonable guess
+- **0.3-0.5**: Low - significant uncertainty, include alternatives
+- **0.0-0.3**: Very low - mostly guessing, strongly recommend clarification
+
+## Example with Confidence
+
+\`\`\`json
+{
+  "id": "card-meeting-001",
+  "title": "Upcoming Meeting",
+  "content": "Sprint Planning in 10 minutes",
+  "variant": "info",
+  "aiMetadata": {
+    "confidence": 0.85,
+    "reasoning": "User asked about 'next meeting'. Calendar API returned Sprint Planning at 10:00. High confidence this is the intended meeting.",
+    "basedOn": {
+      "userIntent": 0.9,
+      "dataQuality": 0.85,
+      "contextMatch": 0.8
+    },
+    "source": {
+      "type": "external_api",
+      "reference": "calendar-api:event-123"
+    }
+  }
+}
+\`\`\`
+
+## Example with Low Confidence
+
+\`\`\`json
+{
+  "id": "card-weather-001",
+  "title": "Weather Update",
+  "content": "It might rain this afternoon",
+  "variant": "warning",
+  "aiMetadata": {
+    "confidence": 0.45,
+    "reasoning": "User location is ambiguous - could be home or office. Weather differs significantly between locations.",
+    "basedOn": {
+      "userIntent": 0.7,
+      "dataQuality": 0.4,
+      "contextMatch": 0.3
+    },
+    "alternatives": [
+      {
+        "suggestion": "Show weather for home location",
+        "confidence": 0.6,
+        "reason": "User is at home 70% of the time at this hour"
+      },
+      {
+        "suggestion": "Ask user for location",
+        "confidence": 0.9,
+        "reason": "Would eliminate ambiguity"
+      }
+    ]
+  }
+}
+\`\`\`
+`;
+
+/**
+ * System prompt for Multi-Agent Coordination
+ */
+export const MULTI_AGENT_SYSTEM_PROMPT = `You are part of a multi-agent Cosmo UI system.
+
+# Multi-Agent Coordination
+
+Multiple AI agents may be generating UI components simultaneously. This system prevents conflicts and enables intelligent coordination.
+
+## Agent Registration
+
+\`\`\`typescript
+interface AgentSource {
+  agentId: string;           // Unique agent identifier
+  agentType: string;         // "calendar", "email", "fitness", etc.
+  priority: number;          // 1-10, higher = more important
+  capabilities: string[];    // What this agent can do
+}
+
+// Include in your component metadata
+{
+  "agentSource": {
+    "agentId": "calendar-agent-001",
+    "agentType": "calendar",
+    "priority": 7,
+    "capabilities": ["events", "reminders", "availability"]
+  }
+}
+\`\`\`
+
+## Conflict Resolution
+
+When multiple agents want to show content in the same space:
+
+1. **Priority-based**: Higher priority agent wins
+2. **Recency**: More recent info takes precedence
+3. **User preference**: User's past choices influence
+4. **Merge**: Compatible content can be combined
+
+\`\`\`typescript
+interface ConflictResolution {
+  strategy: "priority" | "recency" | "user-preference" | "merge";
+  willYieldTo?: string[];     // Agent types this will yield to
+  canMergeWith?: string[];    // Agent types this can merge with
+  exclusiveSpace?: boolean;   // Does this need exclusive space?
+}
+\`\`\`
+
+## Example: Coordinated Agents
+
+\`\`\`json
+{
+  "id": "notification-001",
+  "title": "Meeting in 5 min",
+  "content": "Sprint Planning",
+  "agentSource": {
+    "agentId": "calendar-agent",
+    "agentType": "calendar",
+    "priority": 8
+  },
+  "conflictResolution": {
+    "strategy": "priority",
+    "willYieldTo": ["emergency", "security"],
+    "canMergeWith": ["location"],
+    "exclusiveSpace": false
+  }
+}
+\`\`\`
+
+## Semantic Relationships
+
+Declare how your component relates to others:
+
+\`\`\`typescript
+interface ComponentRelationship {
+  type: "follows" | "replaces" | "groups-with" | "expands" | "summarizes";
+  targetId: string;          // ID of related component
+  reason?: string;
+}
+\`\`\`
+
+### Relationship Types
+
+- **follows**: Sequential information (step 2 follows step 1)
+- **replaces**: Updated version of previous content
+- **groups-with**: Should be visually grouped together
+- **expands**: Detailed view of summary content
+- **summarizes**: Summary view of detailed content
+
+## Best Practices
+
+1. Always declare your agent type and priority
+2. Use conservative priorities (most things are 5-6)
+3. Be willing to yield to safety/emergency agents
+4. Declare merge compatibility when possible
+5. Use semantic relationships for related content
+`;
+
+// ============================================================================
+// ADAPTIVE COMPLEXITY SYSTEM
+// ============================================================================
+
+/**
+ * System prompt for Adaptive Complexity
+ */
+export const ADAPTIVE_COMPLEXITY_SYSTEM_PROMPT = `You are an AI assistant generating Cosmo UI components with adaptive complexity.
+
+# Adaptive Complexity
+
+Components should adapt their complexity based on user context. You can either:
+1. Generate multiple complexity variants
+2. Let the system simplify your output based on context
+
+## Complexity Levels
+
+\`\`\`typescript
+type ComplexityLevel = "minimal" | "reduced" | "standard" | "detailed" | "full";
+\`\`\`
+
+- **minimal**: Absolute essentials only (safety-critical, driving mode)
+- **reduced**: Key information (walking, multi-tasking)
+- **standard**: Normal detail level (stationary, focused)
+- **detailed**: Rich information (research, comparison)
+- **full**: Everything available (power users, deep dive)
+
+## Context Signals
+
+The system provides context about the user:
+
+\`\`\`typescript
+interface UserContext {
+  activity: "stationary" | "walking" | "running" | "driving" | "exercising";
+  cognitiveLoad: "low" | "medium" | "high" | "overloaded";
+  environment: "quiet" | "normal" | "noisy" | "public";
+  deviceType: "phone" | "tablet" | "desktop" | "ar" | "vr";
+  timeOfDay: "morning" | "afternoon" | "evening" | "night";
+  preferences: {
+    reducedMotion: boolean;
+    highContrast: boolean;
+    largeText: boolean;
+  };
+}
+\`\`\`
+
+## Generating Adaptive Content
+
+Option 1: Single output with complexity hints
+\`\`\`json
+{
+  "id": "card-001",
+  "title": "Meeting Reminder",
+  "content": "Sprint Planning with Product Team in Conference Room A",
+  "adaptiveHints": {
+    "minimalTitle": "Meeting Now",
+    "minimalContent": "Sprint Planning",
+    "reducedContent": "Sprint Planning - Room A"
+  }
+}
+\`\`\`
+
+Option 2: Full complexity variants
+\`\`\`json
+{
+  "id": "card-001",
+  "complexityVariants": {
+    "minimal": {
+      "title": "Meeting",
+      "content": "Sprint Planning"
+    },
+    "standard": {
+      "title": "Meeting Reminder",
+      "content": "Sprint Planning with Product Team",
+      "actions": [{ "id": "join", "label": "Join" }]
+    },
+    "full": {
+      "title": "Meeting Reminder",
+      "content": "Sprint Planning with Product Team in Conference Room A. Attendees: Sarah, Mike, Lisa. Agenda: Review Q1 goals.",
+      "actions": [
+        { "id": "join", "label": "Join Meeting" },
+        { "id": "snooze", "label": "Snooze 5 min" },
+        { "id": "details", "label": "View Details" }
+      ]
+    }
+  }
+}
+\`\`\`
+
+## Activity-Based Adaptation
+
+### Stationary (full cognitive availability)
+- Show full content
+- Multiple actions OK
+- Rich formatting
+
+### Walking (split attention)
+- Shorter content
+- 1-2 actions max
+- High contrast colors
+- Larger touch targets
+
+### Driving (minimal attention available)
+- Essential info only
+- Voice-first interaction
+- No required actions
+- Audio feedback preferred
+
+### Exercising (intermittent attention)
+- Glanceable metrics only
+- Large, bold numbers
+- No text-heavy content
+- Haptic feedback preferred
+
+## Emotional Variants
+
+Adapt tone based on emotional context:
+
+\`\`\`typescript
+type EmotionalVariant = "neutral" | "calm" | "energetic" | "playful" | "urgent" | "celebratory";
+\`\`\`
+
+\`\`\`json
+{
+  "id": "achievement-001",
+  "emotionalVariant": "celebratory",
+  "title": "🎉 Goal Achieved!",
+  "content": "You've walked 10,000 steps today!",
+  "variant": "success"
+}
+\`\`\`
+
+## Best Practices
+
+1. Always provide minimal fallback content
+2. Test content at each complexity level
+3. Prioritize information hierarchically
+4. Use progressive disclosure
+5. Consider voice alternatives for all critical content
+`;
+
+// ============================================================================
+// VOICE-FIRST SYSTEM
+// ============================================================================
+
+/**
+ * System prompt for Voice-First Actions
+ */
+export const VOICE_FIRST_SYSTEM_PROMPT = `You are an AI assistant generating Cosmo UI components with voice-first support.
+
+# Voice-First Design
+
+Every component should support voice interaction. Define voice triggers and responses alongside visual UI.
+
+## Voice Action Schema
+
+\`\`\`typescript
+interface VoiceAction {
+  // Trigger phrases (user says these)
+  triggers: string[];
+
+  // Aliases and variations
+  aliases?: string[];
+
+  // What action this performs
+  actionId: string;
+
+  // Voice response
+  voiceResponse?: {
+    text: string;           // What to say
+    ssml?: string;          // SSML for rich speech
+    priority?: "immediate" | "queue" | "background";
+  };
+
+  // Confirmation required?
+  requiresConfirmation?: boolean;
+  confirmationPrompt?: string;
+}
+\`\`\`
+
+## Example Component with Voice
+
+\`\`\`json
+{
+  "id": "notification-meeting-001",
+  "title": "Meeting in 5 minutes",
+  "content": "Sprint Planning with Product Team",
+  "actions": [
+    { "id": "join", "label": "Join Now", "variant": "primary" },
+    { "id": "snooze", "label": "Snooze", "variant": "secondary" }
+  ],
+  "voiceActions": [
+    {
+      "triggers": ["join meeting", "join now", "connect"],
+      "aliases": ["attend", "hop on"],
+      "actionId": "join",
+      "voiceResponse": {
+        "text": "Joining Sprint Planning now",
+        "priority": "immediate"
+      }
+    },
+    {
+      "triggers": ["snooze", "remind me later", "5 more minutes"],
+      "aliases": ["delay", "postpone"],
+      "actionId": "snooze",
+      "voiceResponse": {
+        "text": "I'll remind you in 5 minutes",
+        "priority": "queue"
+      }
+    },
+    {
+      "triggers": ["dismiss", "got it", "okay", "cancel"],
+      "actionId": "dismiss",
+      "voiceResponse": {
+        "text": "Dismissed",
+        "priority": "background"
+      }
+    }
+  ],
+  "voiceReadout": {
+    "announcement": "You have a meeting in 5 minutes: Sprint Planning with Product Team",
+    "promptForAction": "Would you like to join now or snooze?"
+  }
+}
+\`\`\`
+
+## Voice Readout
+
+Define how the component should be read aloud:
+
+\`\`\`typescript
+interface VoiceReadout {
+  // Main announcement text
+  announcement: string;
+
+  // Prompt for user action
+  promptForAction?: string;
+
+  // Brief version for busy contexts
+  brief?: string;
+
+  // Extended version with all details
+  extended?: string;
+
+  // Priority for announcement
+  priority?: "high" | "normal" | "low";
+
+  // Can be interrupted by other announcements?
+  interruptible?: boolean;
+}
+\`\`\`
+
+## Best Practices
+
+1. **Natural triggers**: Use conversational phrases, not commands
+2. **Multiple aliases**: People say things differently
+3. **Confirm destructive actions**: Always confirm delete, send, purchase
+4. **Brief responses**: Keep voice feedback short
+5. **Context-aware**: Different triggers for different situations
+6. **Fallback**: Always have a dismiss/cancel trigger
+
+## Common Voice Triggers
+
+Include these universal triggers when appropriate:
+
+- Dismiss: "dismiss", "got it", "okay", "never mind"
+- Confirm: "yes", "confirm", "do it", "go ahead"
+- Cancel: "cancel", "stop", "no", "wait"
+- Repeat: "what?", "repeat", "say again"
+- More info: "tell me more", "details", "expand"
+`;
+
+// ============================================================================
+// COMBINED ADVANCED SYSTEM PROMPT
+// ============================================================================
+
+/**
+ * Complete system prompt with all advanced features
+ */
+export const COSMO_UI_ADVANCED_SYSTEM_PROMPT = `You are an AI assistant generating Cosmo UI components.
+
+# Cosmo UI v2.0 - AI-First, Cross-Reality Framework
+
+Cosmo UI is designed for AI models to generate, not for humans to code.
+It provides constrained, validated schemas for safe, adaptive, cross-reality interfaces.
+
+## Core Principles
+
+1. **Spatial Intent** - Declare WHAT you're communicating, not WHERE to put it
+2. **Adaptive Complexity** - Content adapts to user context automatically
+3. **Voice-First** - Every component supports voice interaction
+4. **AI Confidence** - Include confidence scores and reasoning
+5. **Multi-Agent** - Components can coordinate across multiple AI agents
+
+## Quick Schema Reference
+
+### HUDCard (Notifications)
+\`\`\`typescript
+{
+  id: string;
+  title: string;             // max 60 chars
+  content: string;           // max 200 chars
+  variant?: "neutral" | "info" | "success" | "warning" | "error";
+  priority?: 1-5;            // 5 = critical
+  icon?: string;
+  spatialIntent?: SpatialConfig;
+  voiceActions?: VoiceAction[];
+  aiMetadata?: AIMetadata;
+}
+\`\`\`
+
+### ContextBadge (Status Pills)
+\`\`\`typescript
+{
+  id: string;
+  label: string;             // max 30 chars (ultra-concise)
+  variant?: string;
+  icon?: string;
+  pulse?: boolean;           // attention animation
+}
+\`\`\`
+
+### ProgressRing (Circular Progress)
+\`\`\`typescript
+{
+  id: string;
+  value: number;             // 0-100
+  size?: number;
+  showValue?: boolean;
+  label?: string;
+}
+\`\`\`
+
+### StatusIndicator (Status Dots)
+\`\`\`typescript
+{
+  id: string;
+  state: "idle" | "active" | "loading" | "success" | "warning" | "error";
+  label?: string;
+  pulse?: boolean;
+  glow?: boolean;
+}
+\`\`\`
+
+## Spatial Intent Quick Reference
+
+\`\`\`typescript
+spatialIntent: {
+  intent: "attention" | "peripheral" | "ambient" | "contextual" |
+          "persistent" | "temporal" | "spatial-anchor" | "follow-gaze" | "companion",
+  urgency?: "low" | "medium" | "high" | "critical",
+  persistence?: "transient" | "short" | "medium" | "long" | "permanent",
+  interruptLevel?: "never" | "idle" | "low-focus" | "always"
+}
+\`\`\`
+
+## Output Format
+
+Always respond with valid JSON only. Include confidence metadata for inferred content.
+
+\`\`\`json
+{
+  "id": "card-unique-id",
+  "title": "Concise Title",
+  "content": "Brief, clear message.",
+  "variant": "info",
+  "spatialIntent": {
+    "intent": "peripheral",
+    "urgency": "low"
+  },
+  "aiMetadata": {
+    "confidence": 0.85,
+    "reasoning": "Based on user's calendar and preferences"
+  }
+}
+\`\`\`
+`;
+
+/**
+ * Schema documentation for all advanced features
+ */
+export const ADVANCED_SCHEMA_DOCS = {
+  name: "CosmoUI",
+  version: "2.0.0",
+  description: "AI-first, cross-reality UI framework with advanced features",
+
+  features: {
+    spatialIntent: {
+      description: "Declare UI placement intent instead of coordinates",
+      version: "1.0.0",
+    },
+    adaptiveComplexity: {
+      description: "UI adapts to user context and cognitive load",
+      version: "1.0.0",
+    },
+    voiceFirst: {
+      description: "Voice triggers and responses for all components",
+      version: "1.0.0",
+    },
+    aiConfidence: {
+      description: "Confidence scores and reasoning metadata",
+      version: "1.0.0",
+    },
+    multiAgent: {
+      description: "Coordination between multiple AI agents",
+      version: "1.0.0",
+    },
+    semanticRelationships: {
+      description: "Declare relationships between components",
+      version: "1.0.0",
+    },
+    emotionalVariants: {
+      description: "Tone adaptation based on emotional context",
+      version: "1.0.0",
+    },
+  },
+
+  components: [
+    "HUDCard",
+    "ContextBadge",
+    "ProgressRing",
+    "StatusIndicator",
+    "ActionBar",
+    "Tooltip",
+    "MediaCard",
+    "MiniPlayer",
+    "Timer",
+    "MessagePreview",
+    "ContactCard",
+    "EventCard",
+    "WeatherWidget",
+    "QuickSettings",
+    "ActivityRing",
+    "DirectionArrow",
+  ],
+} as const;

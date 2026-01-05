@@ -83,6 +83,23 @@ export type { WorldAnchor } from "./utils/anchoring";
 export { useHitTest, useHitTestOnce } from "./hooks/useHitTest";
 export type { HitTestResult } from "./hooks/useHitTest";
 
+// AR Text Rendering (troika-three-text)
+export {
+  ARText,
+  ARTitle,
+  ARBody,
+  ARCaption,
+  ARLabel,
+  ARBadge,
+  ARHUDText,
+  AR_FONTS,
+  AR_TEXT_PRESETS,
+  calculateARFontSize,
+  calculateARMaxWidth,
+  getContrastingColor,
+} from "./components/ARText";
+export type { ARTextProps } from "./components/ARText";
+
 // Re-export core schema for convenience
 export type {
   HUDCard,

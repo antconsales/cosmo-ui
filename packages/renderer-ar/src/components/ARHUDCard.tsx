@@ -17,13 +17,15 @@ import {
   type WorldAnchor,
 } from "../utils/anchoring";
 import { useHitTest } from "../hooks/useHitTest";
+import { ARText, calculateARFontSize } from "./ARText";
 
 /**
  * ARHUDCard - 3D HUD Card for AR environments
  *
- * v0.2: Supports both screen-space (billboard) and world-space (fixed) anchoring
+ * v1.0: Full text rendering with troika-three-text
  * - Screen-space: follows camera, uses position enum
  * - World-space: fixed in 3D space, uses metadata.worldPosition or auto-anchor
+ * - Rich text rendering with SDF fonts
  */
 
 export interface ARHUDCardProps {
@@ -142,6 +144,20 @@ export function ARHUDCard({
     [card.variant]
   );
 
+  // Text styling based on card distance
+  const textDistance = 0.5; // Default distance for AR text sizing
+  const titleFontSize = calculateARFontSize(textDistance, 0.03);
+  const contentFontSize = calculateARFontSize(textDistance, 0.02);
+  const buttonFontSize = calculateARFontSize(textDistance, 0.016);
+
+  // Text colors - convert THREE.Color to hex string
+  const textColor = colors.text ? `#${colors.text.getHexString()}` : "#ffffff";
+  const mutedColor = "rgba(255, 255, 255, 0.7)";
+
+  // Calculate padding
+  const padding = 0.015;
+  const contentStartY = size.height / 2 - padding - titleFontSize;
+
   return (
     <group ref={groupRef} position={position}>
       {/* Card background */}
@@ -158,8 +174,94 @@ export function ARHUDCard({
         <lineBasicMaterial attach="material" color={colors.border} />
       </lineSegments>
 
-      {/* Text rendering would require troika-three-text or THREE.TextGeometry */}
-      {/* For v0.1, we keep it minimal - text will be added in next iteration */}
+      {/* Title text */}
+      <ARText
+        position={[-size.width / 2 + padding, contentStartY, 0.001]}
+        color={textColor}
+        fontSize={titleFontSize}
+        anchorX="left"
+        anchorY="top"
+        maxWidth={size.width - padding * 2}
+        fontWeight="bold"
+        outlineWidth={0.001}
+        outlineColor="#000000"
+      >
+        {card.title}
+      </ARText>
+
+      {/* Content text */}
+      <ARText
+        position={[-size.width / 2 + padding, contentStartY - titleFontSize - 0.01, 0.001]}
+        color={mutedColor}
+        fontSize={contentFontSize}
+        anchorX="left"
+        anchorY="top"
+        maxWidth={size.width - padding * 2}
+        lineHeight={1.4}
+        outlineWidth={0.0005}
+        outlineColor="#000000"
+      >
+        {card.content}
+      </ARText>
+
+      {/* Action buttons */}
+      {card.actions && card.actions.length > 0 && (
+        <group position={[0, -size.height / 2 + padding + 0.02, 0.002]}>
+          {card.actions.map((action, index) => {
+            const buttonWidth = 0.06;
+            const buttonHeight = 0.025;
+            const buttonSpacing = 0.01;
+            const totalWidth = card.actions!.length * buttonWidth + (card.actions!.length - 1) * buttonSpacing;
+            const startX = -totalWidth / 2 + buttonWidth / 2;
+            const buttonX = startX + index * (buttonWidth + buttonSpacing);
+
+            const buttonColor = action.variant === "primary"
+              ? colors.border
+              : action.variant === "destructive"
+              ? "#ef4444"
+              : "rgba(255, 255, 255, 0.2)";
+
+            return (
+              <group key={action.id} position={[buttonX, 0, 0]}>
+                {/* Button background */}
+                <mesh>
+                  <planeGeometry args={[buttonWidth, buttonHeight]} />
+                  <meshBasicMaterial
+                    color={buttonColor}
+                    transparent
+                    opacity={0.9}
+                  />
+                </mesh>
+                {/* Button label */}
+                <ARText
+                  position={[0, 0, 0.001]}
+                  color={action.variant === "primary" ? "#ffffff" : textColor}
+                  fontSize={buttonFontSize}
+                  anchorX="center"
+                  anchorY="middle"
+                  fontWeight="bold"
+                >
+                  {action.label}
+                </ARText>
+              </group>
+            );
+          })}
+        </group>
+      )}
+
+      {/* Dismiss button (if dismissible) */}
+      {card.dismissible !== false && (
+        <group position={[size.width / 2 - padding, size.height / 2 - padding, 0.002]}>
+          <ARText
+            color={mutedColor}
+            fontSize={titleFontSize}
+            anchorX="right"
+            anchorY="top"
+          >
+            ×
+          </ARText>
+        </group>
+      )}
     </group>
   );
 }

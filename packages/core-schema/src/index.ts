@@ -213,3 +213,269 @@ export type {
   ActionBarConstraints,
   TooltipConstraints
 } from "./constraints";
+
+// ============================================
+// THEME SYSTEM (New)
+// ============================================
+
+export {
+  // Primitives
+  PRIMITIVE_COLORS,
+  SPACING,
+  RADIUS,
+  SHADOWS,
+  ANIMATION,
+  TYPOGRAPHY,
+  GLASS,
+  // Themes
+  lightTheme,
+  darkTheme,
+  arTheme,
+  themes,
+  // Utilities
+  getTheme,
+  createTheme,
+  themeToCSSVariables,
+  getSemanticColor,
+} from "./theme";
+
+export type {
+  ColorScale,
+  SpacingTokens,
+  RadiusTokens,
+  ShadowTokens,
+  AnimationTokens,
+  TypographyTokens,
+  GlassTokens,
+  ThemeMode,
+  SemanticColors,
+  CosmoTheme,
+  ThemeName,
+} from "./theme";
+
+// ============================================
+// SPATIAL INTENT SYSTEM (New)
+// ============================================
+
+export {
+  INTENT_DEFAULTS,
+  ZONE_COORDINATES,
+  resolveSpatialConfig,
+  checkCollision,
+  resolveCollision,
+  createSpatialLayoutState,
+  addToLayout,
+  removeFromLayout,
+  updateUserContext,
+} from "./spatial";
+
+export type {
+  SpatialIntent,
+  UrgencyLevel,
+  SpatialZone,
+  ARSpatialPreference,
+  SpatialConfig,
+  ViewingContext,
+  UserContext,
+  SpatialAnchor,
+  SpatialLayoutState,
+} from "./spatial";
+
+// ============================================
+// AI METADATA SYSTEM (New)
+// ============================================
+
+export {
+  getConfidenceLevel,
+  DEFAULT_MULTI_AGENT_CONFIG,
+  canAgentAddComponent,
+  resolveAgentConflict,
+  createDefaultAIMetadata,
+  calculateOverallConfidence,
+  formatAIMetadataForDebug,
+} from "./ai-metadata";
+
+export type {
+  AIConfidence,
+  ConfidenceLevel,
+  AIReasoning,
+  AlternativeOption,
+  AISource,
+  AIGenerationContext,
+  AIFeedback,
+  AIMetadata,
+  MultiAgentConfig,
+  AgentUIRequest,
+  AgentUIResponse,
+  ActiveComponent,
+} from "./ai-metadata";
+
+// ============================================
+// ADAPTIVE COMPLEXITY SYSTEM (New)
+// ============================================
+
+export {
+  COMPLEXITY_PRESETS,
+  ACTIVITY_COMPLEXITY,
+  ACTIVITY_RULES,
+  EMOTIONAL_CONFIGS,
+  computeAdaptiveConfig,
+  getEmotionalConfig,
+  suggestEmotionalVariant,
+  computeFullAdaptiveState,
+} from "./adaptive";
+
+export type {
+  ComplexityLevel,
+  UserActivity,
+  EnvironmentType,
+  LightingCondition,
+  CognitiveLoad,
+  AdaptiveContext,
+  AdaptiveConfig,
+  EmotionalVariant,
+  EmotionalConfig,
+  FullAdaptiveState,
+} from "./adaptive";
+
+// ============================================
+// VOICE-FIRST ACTIONS (New)
+// ============================================
+
+export {
+  BUILT_IN_VOICE_TRIGGERS,
+  DEFAULT_VOICE_CONFIGS,
+  generateAnnouncement,
+  matchesTrigger,
+  findMatchingAction,
+  getAvailableCommands,
+  generateVoiceHelpText,
+} from "./voice";
+
+export type {
+  VoiceTrigger,
+  VoiceAction,
+  BuiltInVoiceAction,
+  VoiceFeedbackType,
+  EarconType,
+  HapticPattern,
+  VoiceFeedbackConfig,
+  AnnouncementPriority,
+  VoiceAnnouncement,
+  ComponentVoiceConfig,
+  VoiceContext,
+  VoiceEventType,
+  VoiceEvent,
+} from "./voice";
+
+// ============================================
+// BIOMETRIC FEEDBACK (New)
+// ============================================
+
+export {
+  DEFAULT_GAZE_CONFIG,
+  BIOMETRIC_PRESETS,
+  calculateAttentionScore,
+  detectDrowsiness,
+  calculateStressLevel,
+  isGazingAtComponent,
+} from "./biometric";
+
+export type {
+  EyeTrackingData,
+  GazeFocusState,
+  AttentionMetrics,
+  HeartRateData,
+  StressIndicators,
+  ActivityState,
+  BiometricContext,
+  BiometricReaction,
+  BiometricTrigger,
+  BiometricAction,
+  GazeInteractionConfig,
+} from "./biometric";
+
+// ============================================
+// SEMANTIC RELATIONSHIPS (New)
+// ============================================
+
+export {
+  createRelationshipGraph,
+  addRelationship,
+  removeRelationship,
+  getRelationshipsFor,
+  getCascadeDismissals,
+  follows,
+  replaces,
+  groupsWith,
+  expands,
+  confirms,
+  respondsTo,
+  createConfirmationFlow,
+  createProgressFlow,
+} from "./relationships";
+
+export type {
+  RelationshipType,
+  TimingRelation,
+  PositionRelation,
+  SemanticRelationship,
+  RelationshipCondition,
+  RelationshipAnimation,
+  RelationshipBehavior,
+  RelationshipGraph,
+  UIFlow,
+  UIFlowStep,
+} from "./relationships";
+
+// ============================================
+// ICON SYSTEM (New)
+// ============================================
+
+export {
+  ICON_REGISTRY,
+  getIcon,
+  getIconsByCategory,
+  searchIcons,
+  getAllIconNames,
+  iconToSVG,
+  iconToDataURL,
+  isValidIconName,
+} from "./icons";
+
+export type {
+  IconCategory,
+  IconDefinition,
+  IconName,
+} from "./icons";
+
+// ============================================
+// PLUGIN ARCHITECTURE (New)
+// ============================================
+
+export {
+  createPluginRegistry,
+  registerPlugin,
+  unregisterPlugin,
+  getComponentSchema,
+  getValidator,
+  getRenderer,
+  getAIAdapter,
+  createPlugin,
+  PluginBuilder,
+  examplePlugin,
+} from "./plugin";
+
+export type {
+  PluginMetadata,
+  PluginComponentSchema,
+  PluginValidator,
+  ValidationResult,
+  ValidationError,
+  PluginRenderer,
+  PluginAIAdapter,
+  PluginThemeExtension,
+  CosmoPlugin,
+  PluginHooks,
+  PluginRegistry,
+} from "./plugin";

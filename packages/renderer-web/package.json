@@ -1,7 +1,7 @@
 {
   "name": "@cosmo/renderer-web",
-  "version": "0.1.0",
-  "description": "React renderer for Cosmo UI components (Web)",
+  "version": "2.0.0",
+  "description": "React renderer for Cosmo UI - 16 components with Theme System, Adaptive Complexity, Spatial Layout, and Voice Commands",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -15,29 +15,49 @@
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean --external react",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch --external react",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean --external react --external react-dom",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch --external react --external react-dom",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"Tests coming soon\""
+    "test": "vitest run"
   },
   "keywords": [
     "cosmo",
     "ui",
     "renderer",
     "react",
-    "web"
+    "web",
+    "theme",
+    "adaptive-ui",
+    "voice-commands",
+    "spatial-layout",
+    "notifications",
+    "hud",
+    "wearable"
   ],
   "author": "Antonio Consales",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antonioconsales/cosmo-ui.git",
+    "directory": "packages/renderer-web"
+  },
+  "homepage": "https://github.com/antonioconsales/cosmo-ui/tree/main/packages/renderer-web#readme",
+  "bugs": {
+    "url": "https://github.com/antonioconsales/cosmo-ui/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@cosmo/core-schema": "workspace:*",
     "@cosmo/validator": "workspace:*"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.47",
@@ -45,6 +65,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsup": "^8.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^2.1.0"
   }
 }
