@@ -10,6 +10,8 @@ import {
 export interface StatusIndicatorProps {
   indicator: StatusIndicatorType;
   onDismiss?: (id: string) => void;
+  /** Stack index for multiple indicators at same position */
+  stackIndex?: number;
 }
 
 /**
@@ -96,7 +98,7 @@ function injectPulseStyle() {
  * - Optional glow effect
  * - Optional label next to indicator
  */
-export function StatusIndicator({ indicator }: StatusIndicatorProps) {
+export function StatusIndicator({ indicator, stackIndex = 0 }: StatusIndicatorProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   // Guard against undefined indicator
@@ -107,6 +109,9 @@ export function StatusIndicator({ indicator }: StatusIndicatorProps) {
   const size = indicator.size ?? 12;
   const shouldPulse = indicator.pulse ?? (state === "loading");
   const showGlow = indicator.glow ?? false;
+
+  // Calculate stack offset (24px per item)
+  const stackOffset = stackIndex * 24;
 
   // Get colors
   const colors = STATE_COLORS[state] ?? STATE_COLORS.idle!;
@@ -131,6 +136,14 @@ export function StatusIndicator({ indicator }: StatusIndicatorProps) {
   // Calculate label font size based on indicator size
   const labelFontSize = Math.max(10, size * 0.9);
 
+  // Determine stack direction based on position
+  const isTopPosition = position.startsWith("top") || position === "center";
+  const stackStyle = stackOffset > 0 ? (
+    isTopPosition
+      ? { marginTop: stackOffset }
+      : { marginBottom: stackOffset }
+  ) : {};
+
   return (
     <div
       data-cosmo-component="status-indicator"
@@ -139,13 +152,14 @@ export function StatusIndicator({ indicator }: StatusIndicatorProps) {
       style={{
         position: "fixed",
         ...positionStyle,
+        ...stackStyle,
         transform,
         display: "inline-flex",
         alignItems: "center",
         gap: `${size * 0.5}px`,
-        zIndex: getZIndex(2),
+        zIndex: getZIndex(2) - stackIndex,
         opacity: isVisible ? 1 : 0,
-        transition: "opacity 0.2s ease-in-out",
+        transition: "opacity 0.2s ease-in-out, margin 0.2s ease-in-out",
         pointerEvents: "auto",
       }}
     >

@@ -10,6 +10,8 @@ import {
 export interface ProgressRingProps {
   ring: ProgressRingType;
   onDismiss?: (id: string) => void;
+  /** Stack index for multiple rings at same position */
+  stackIndex?: number;
 }
 
 /**
@@ -73,7 +75,7 @@ const VARIANT_COLORS: Record<string, { track: string; progress: string; text: st
  * - Optional center value display
  * - Optional label below ring
  */
-export function ProgressRing({ ring }: ProgressRingProps) {
+export function ProgressRing({ ring, stackIndex = 0 }: ProgressRingProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [displayedValue, setDisplayedValue] = useState(ring?.value ?? 0);
   const prevValueRef = useRef(ring?.value ?? 0);
@@ -86,6 +88,9 @@ export function ProgressRing({ ring }: ProgressRingProps) {
   const size = ring.size ?? 48;
   const thickness = ring.thickness ?? 6;
   const animated = ring.animated ?? true;
+
+  // Calculate stack offset (size + 16px gap per item)
+  const stackOffset = stackIndex * (size + 16);
 
   // Get colors
   const colors = VARIANT_COLORS[variant] ?? VARIANT_COLORS.neutral!;
@@ -145,6 +150,14 @@ export function ProgressRing({ ring }: ProgressRingProps) {
   const valueFontSize = Math.max(10, size * 0.25);
   const labelFontSize = Math.max(10, size * 0.18);
 
+  // Determine stack direction based on position
+  const isTopPosition = position.startsWith("top") || position === "center";
+  const stackStyle = stackOffset > 0 ? (
+    isTopPosition
+      ? { marginTop: stackOffset }
+      : { marginBottom: stackOffset }
+  ) : {};
+
   return (
     <div
       data-cosmo-component="progress-ring"
@@ -153,14 +166,15 @@ export function ProgressRing({ ring }: ProgressRingProps) {
       style={{
         position: "fixed",
         ...positionStyle,
+        ...stackStyle,
         transform,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         gap: "4px",
-        zIndex: getZIndex(3),
+        zIndex: getZIndex(3) - stackIndex,
         opacity: isVisible ? 1 : 0,
-        transition: "opacity 0.2s ease-in-out",
+        transition: "opacity 0.2s ease-in-out, margin 0.2s ease-in-out",
         pointerEvents: "auto",
       }}
     >

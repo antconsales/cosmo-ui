@@ -77,18 +77,36 @@ export function ContextBadgeManager({
     [removeBadge]
   );
 
+  // Group badges by position for stacking
+  const badgesByPosition = new Map<string, ContextBadgeType[]>();
+  badges.forEach((badge) => {
+    const pos = badge.position || "top-right";
+    const list = badgesByPosition.get(pos) || [];
+    list.push(badge);
+    badgesByPosition.set(pos, list);
+  });
+
+  // Flatten with stack index
+  const badgesWithStack: Array<{ badge: ContextBadgeType; stackIndex: number }> = [];
+  badgesByPosition.forEach((list) => {
+    list.forEach((badge, index) => {
+      badgesWithStack.push({ badge, stackIndex: index });
+    });
+  });
+
   return (
     <ContextBadgeManagerContext.Provider
       value={{ badges, addBadge, removeBadge, clearAll }}
     >
       {children}
 
-      {/* Render all active badges */}
-      {Array.from(badges.values()).map((badge) => (
+      {/* Render all active badges with stack offset */}
+      {badgesWithStack.map(({ badge, stackIndex }) => (
         <ContextBadge
           key={badge.id}
           badge={badge}
           onDismiss={handleDismiss}
+          stackIndex={stackIndex}
         />
       ))}
     </ContextBadgeManagerContext.Provider>

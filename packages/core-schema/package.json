@@ -1,7 +1,7 @@
 {
   "name": "@cosmo/core-schema",
-  "version": "0.1.0",
-  "description": "Type definitions and schemas for Cosmo UI components",
+  "version": "2.0.0",
+  "description": "Type definitions, schemas, and core systems for Cosmo UI - including Theme, Spatial Intent, Adaptive Complexity, Voice-First, and AI Metadata",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -20,6 +20,7 @@
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
@@ -32,10 +33,29 @@
     "schema",
     "ai-first",
     "cross-reality",
-    "typescript"
+    "typescript",
+    "theme",
+    "spatial-intent",
+    "adaptive-ui",
+    "voice-first",
+    "ar",
+    "vr",
+    "xr"
   ],
   "author": "Antonio Consales",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antonioconsales/cosmo-ui.git",
+    "directory": "packages/core-schema"
+  },
+  "homepage": "https://github.com/antonioconsales/cosmo-ui/tree/main/packages/core-schema#readme",
+  "bugs": {
+    "url": "https://github.com/antonioconsales/cosmo-ui/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"

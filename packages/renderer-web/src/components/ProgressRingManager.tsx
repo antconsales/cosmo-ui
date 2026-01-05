@@ -89,18 +89,36 @@ export function ProgressRingManager({
     [removeRing]
   );
 
+  // Group rings by position for stacking
+  const ringsByPosition = new Map<string, ProgressRingType[]>();
+  rings.forEach((ring) => {
+    const pos = ring.position || "center";
+    const list = ringsByPosition.get(pos) || [];
+    list.push(ring);
+    ringsByPosition.set(pos, list);
+  });
+
+  // Flatten with stack index
+  const ringsWithStack: Array<{ ring: ProgressRingType; stackIndex: number }> = [];
+  ringsByPosition.forEach((list) => {
+    list.forEach((ring, index) => {
+      ringsWithStack.push({ ring, stackIndex: index });
+    });
+  });
+
   return (
     <ProgressRingManagerContext.Provider
       value={{ rings, addRing, updateRing, removeRing, clearAll }}
     >
       {children}
 
-      {/* Render all active rings */}
-      {Array.from(rings.values()).map((ring) => (
+      {/* Render all active rings with stack offset */}
+      {ringsWithStack.map(({ ring, stackIndex }) => (
         <ProgressRing
           key={ring.id}
           ring={ring}
           onDismiss={handleDismiss}
+          stackIndex={stackIndex}
         />
       ))}
     </ProgressRingManagerContext.Provider>

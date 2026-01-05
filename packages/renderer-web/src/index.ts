@@ -127,3 +127,70 @@ export {
   getZIndex,
 } from "./utils/positioning";
 export type { PositionStyle } from "./utils/positioning";
+
+// ============================================
+// CONTEXT & PROVIDERS (New)
+// ============================================
+
+// Main provider
+export {
+  CosmoProvider,
+  type CosmoProviderProps,
+} from "./context";
+
+// Theme context
+export {
+  ThemeProvider,
+  useTheme,
+  useThemeColors,
+  useVariantColor,
+  useIsDark,
+  useAnimationTokens,
+  useSpacingTokens,
+  lightTheme,
+  darkTheme,
+  arTheme,
+  getTheme,
+  createTheme,
+  type ThemeContextValue,
+  type ThemeProviderProps,
+} from "./context";
+
+// Adaptive context
+export {
+  AdaptiveProvider,
+  useAdaptive,
+  useComplexity,
+  useFeature,
+  useAnimationSettings,
+  useSafetyMode,
+  useEmotionalState,
+  type AdaptiveContextValue,
+  type AdaptiveProviderProps,
+} from "./context";
+
+// ============================================
+// HOOKS (Advanced Features)
+// ============================================
+
+// Spatial Layout
+export {
+  useSpatialLayout,
+  useSpatialIntent,
+  ZONE_TO_POSITION,
+  type SpatialLayoutItem,
+  type SpatialLayoutContext,
+  type SpatialLayoutOptions,
+  type UseSpatialLayoutReturn,
+} from "./hooks";
+
+// Voice Commands
+export {
+  useVoiceCommands,
+  useVoiceAction,
+  useTextToSpeech,
+  type VoiceCommandsOptions,
+  type VoiceCommandsState,
+  type UseVoiceCommandsReturn,
+  type SpeakOptions,
+} from "./hooks";
