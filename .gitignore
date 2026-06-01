@@ -42,3 +42,6 @@ yarn-error.log*
 .turbo
 .vercel
 storybook-static/
+
+# Claude Code local settings (may contain secrets)
+.claude/settings.local.json
