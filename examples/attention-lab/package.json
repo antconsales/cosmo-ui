@@ -1,0 +1,11 @@
+{
+  "name": "@cosmo/attention-lab",
+  "version": "0.1.0-experimental.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @cosmo/runtime build && node server.mjs",
+    "build": "node --check app.js && node --check scenarios.js && node --check server.mjs && node --check replay.mjs",
+    "typecheck": "node --check app.js && node --check scenarios.js && node --check server.mjs && node --check replay.mjs"
+  }
+}

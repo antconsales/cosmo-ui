@@ -1,5 +1,7 @@
 # COSMO UI v2.0
 
+> **New, experimental direction (2026-09-28):** an additive attention runtime is being developed in this repository. Start with the [Attention Lab and tracking records](docs/attention/README.md). The existing v2 packages below remain unchanged; the experiment is not a published protocol or production release.
+
 **AI-First Cross-Reality UI Framework**
 
 > A UI framework designed for AI models to generate, manipulate, and reason about interfaces across Web, AR, and VR platforms.

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>COSMO · Attention Lab</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <a href="/" class="brand">COSMO<span>Attention Lab</span></a
+      ><span class="tag">ESPERIMENTO 001</span>
+    </header>
+    <main>
+      <section class="intro">
+        <p class="eyebrow">IL LAVORO UMANO, AL CENTRO</p>
+        <h1>Tre agenti lavorano.<br />Tu scegli quando ascoltarli.</h1>
+        <p>
+          Confronta gli stessi eventi con notifiche immediate e con la prima
+          policy Cosmo. I dati sono simulati; i contatori descrivono il
+          software, non un beneficio umano misurato.
+        </p>
+      </section>
+      <section class="controls" aria-label="Controlli dell'esperimento">
+        <label>Scenario<select id="scenario"></select></label>
+        <label
+          >La tua modalità<select id="mode">
+            <option value="available">Disponibile</option>
+            <option value="focused">Concentrato</option>
+            <option value="do-not-disturb">Non interrompere</option>
+          </select></label
+        >
+        <button id="advance">Avanza di 5 secondi</button
+        ><button id="reset" class="secondary">Ricomincia</button
+        ><button id="export" class="secondary">Esporta replay</button>
+        <output id="clock" aria-label="Tempo simulato">00:00</output>
+      </section>
+      <section class="task">
+        <div>
+          <p class="eyebrow">IL TUO COMPITO</p>
+          <h2>Prepara una breve nota sul report</h2>
+          <p>
+            Puoi scrivere qui mentre confronti gli agenti. La nota resta nel
+            browser e non viene inclusa nel replay.
+          </p>
+        </div>
+        <textarea
+          aria-label="Nota personale"
+          placeholder="Quali risultati vuoi evidenziare? La mia nota…"
+        ></textarea>
+      </section>
+      <div id="error" role="alert"></div>
+      <details id="export-panel" hidden>
+        <summary>Replay JSON pronto: puoi copiarlo o scaricarlo</summary>
+        <textarea id="export-json" aria-label="Replay JSON" readonly></textarea>
+      </details>
+      <div class="comparison" id="comparison"></div>
+      <footer>
+        Clock manuale · Nessuna chiamata AI · Un solo host · Le risposte nei due
+        pannelli sono indipendenti · Nessuna azione esterna viene eseguita
+      </footer>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
