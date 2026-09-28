@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "COSMO attention request, experiment 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "title", "detail", "validForMs", "options"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "kind": { "enum": ["inform", "ask"] },
+    "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "detail": { "type": "string", "minLength": 1, "maxLength": 2000 },
+    "validForMs": { "type": "integer", "minimum": 1, "maximum": 86400000 },
+    "options": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 4,
+      "items": { "type": "string", "minLength": 1, "maxLength": 100 }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "inform" } } },
+      "then": { "properties": { "options": { "maxItems": 0 } } },
+      "else": { "properties": { "options": { "minItems": 1 } } }
+    }
+  ]
+}

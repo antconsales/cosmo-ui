@@ -1,0 +1,28 @@
+name: Attention experiment
+
+on:
+  push:
+    branches: [master, main, "codex/attention-*"]
+  pull_request:
+    branches: [master, main]
+
+permissions:
+  contents: read
+
+jobs:
+  attention:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @cosmo/runtime build
+      - run: pnpm --filter @cosmo/runtime typecheck
+      - run: pnpm exec vitest run packages/runtime/src/index.test.ts
+      - run: pnpm --filter @cosmo/attention-lab build
